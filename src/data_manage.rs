@@ -2,20 +2,29 @@ use serde_json::{self, json};
 use std::{
     fs::{OpenOptions,read_to_string},
     io::{self, Write},
-    process::Command
+    process::Command, path::PathBuf
 };
+
+use dirs::home_dir;
 
 pub struct DataManage {
     json: serde_json::Value,
+    path: PathBuf
 }
 
 impl DataManage {
     pub fn new() -> DataManage {
+        let mut path_buf = PathBuf::new();
+        path_buf.push("Projects/cli/libmanage/libs/libs.json");
+        let path = home_dir().unwrap().join(path_buf);
+
         let content: serde_json::Value = serde_json::from_slice(
-            read_to_string("libs/libs.json").unwrap().as_bytes())
+            read_to_string(path.clone())
+            .unwrap()
+            .as_bytes())
             .unwrap();
 
-        return DataManage {json: content};
+        return DataManage {json: content, path};
     }
 
     pub fn download(&self, args: &Vec<String>) {
@@ -64,7 +73,6 @@ impl DataManage {
                 "github": git_link.trim()
             }
         });
-
 
         let mut json = self.json.clone();
 
@@ -136,7 +144,7 @@ impl DataManage {
     fn update_json(&self, json: serde_json::Value) {
         let mut file = OpenOptions::new()
             .append(true)
-            .open("libs/libs.json")
+            .open(self.path.clone())
             .expect("ERROR: DataManage -> update_json -> OpenOptions -> open");
 
         file.set_len(0)
