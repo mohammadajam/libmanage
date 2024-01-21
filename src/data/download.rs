@@ -1,15 +1,11 @@
 use super::get_json;
-use std::{
-    env,
-    process::Command
-};
+use std::process::Command;
 
 
-pub fn download() {
-    let args: Vec<String> = env::args().collect();
+pub fn download(libs: Vec<String>) {
     let json  = get_json();
 
-    for arg in args.iter() {
+    for arg in libs.iter() {
         for (lib, value) in json.as_object().unwrap() {
             if lib == arg.trim() {
                 for (content, link) in value.as_object().unwrap() {
@@ -29,28 +25,3 @@ pub fn download() {
     }
 
 }
-
-
-/*
-
-        for arg in args.iter() {
-            for (k, v) in self.json.as_object().unwrap() {
-                if k == arg.trim() {
-                    for (s, l) in v.as_object().unwrap() {
-                        if s == "github" {
-                            let output = Command::new("git")
-                                .arg("clone")
-                                .arg(l.as_str().unwrap())
-                                .spawn()
-                                .expect("ERROR: DataManage -> download -> Command -> new")
-                                .wait()
-                                .unwrap();
-                            println!("{:?}", output);
-                        }
-                    }
-                }
-            }
-        }
-
-
-*/
