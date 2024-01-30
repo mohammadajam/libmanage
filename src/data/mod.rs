@@ -4,6 +4,7 @@ pub use download::*;
 pub mod edit;
 pub use edit::*;
 
+use core::panic;
 use std::{
     fs::{read_to_string, OpenOptions},
     io::Write, 
@@ -11,14 +12,38 @@ use std::{
 };
 
 fn get_json() -> serde_json::Value {
-    let path = get_path();
+    let mut path = get_path();
 
+    path.push_str("libs.json");
+    let path = String::from(path);
 
-    serde_json::from_slice(
-        read_to_string(path)
-        .unwrap()
-        .as_bytes())
-        .unwrap()
+    let text = read_to_string(path);
+
+    match text {
+        Ok(content) => {
+            let json: serde_json::Value  = serde_json::from_slice(content.as_bytes()).unwrap();
+            return json;
+        }
+
+        Err(err) => panic!("ERROR READ FILE {err:?}")
+    }
+}
+
+fn get_package_json() -> serde_json::Value {
+    let mut path = get_path();
+
+    path.push_str("library_package.json");
+    path = String::from(path);
+
+    let text = read_to_string(path);
+
+    match text {
+        Ok(content) => {
+            let json: serde_json::Value = serde_json::from_slice(content.as_bytes()).unwrap();
+            return json;
+        }
+        Err(err) => panic!("ERROR READ library_packages ERR {err:?}")
+    }
 }
 
 fn update_data(json: serde_json::Value) {
@@ -35,7 +60,7 @@ fn update_data(json: serde_json::Value) {
         json
         .to_string()
         .as_bytes()
-        ).expect("DataManage -> update_json -> write");
+        ).expect("ERROR update_data WRITE ERROR");
 }
 
 pub fn update_with(dest: &mut serde_json::Value, src: &serde_json::Value) {
@@ -61,20 +86,28 @@ pub fn update_with(dest: &mut serde_json::Value, src: &serde_json::Value) {
 
 
 pub fn get_path() -> String {
-    let mut path = String::from_utf8(
-        Command::new("bash")
+    let cmd_result = Command::new("bash")
         .arg("-c")
         .arg("echo $LIBMANAGE_DATA")
-        .output()
-        .unwrap()
-        .stdout)
-        .unwrap();
+        .output();
+
+    let mut path = match cmd_result {
+        Ok(result) => {
+            match String::from_utf8(result.stdout) {
+                Ok(path) => path,
+                Err(err) => panic!("ERROR UNWRAP STRING {err:?}")
+            }
+        }
+
+        Err(state) => panic!("ERROR ECHO PATH {state:?}")
+    };
+    
 
     if path == "" {
-        return String::from("data/libs.json");
+        return String::from("data/");
     }
+
     path.pop();
-    path.push_str("libs.json");
-    path = String::from(path);
+
     path
 }

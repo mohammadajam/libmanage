@@ -38,12 +38,12 @@ pub fn install() {
             .spawn()
             .expect("Error: cp .libmanage/libmanage");
     }
-    if libmanage_dir.join("data").exists() {
+    if libmanage_dir.join("data/").exists() {
         Command::new("cp")
             .arg("-a")
             .arg("-n")
             .arg("data/.")
-            .arg(&libmanage_dir.join("data/"))
+            .arg(&libmanage_dir.join("data/."))
             .spawn()
             .expect("Error: cp .libmanage/data");
 

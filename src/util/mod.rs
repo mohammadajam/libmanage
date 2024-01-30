@@ -21,21 +21,29 @@ fn get_json() -> serde_json::Value {
 }
 
 
-#[allow(dead_code)]
 pub fn get_path() -> String {
-    let mut path = String::from_utf8(
-        Command::new("bash")
+    let cmd_result = Command::new("bash")
         .arg("-c")
         .arg("echo $LIBMANAGE_DATA")
-        .output()
-        .unwrap()
-        .stdout)
-        .unwrap();
-    path.pop();
+        .output();
+
+    let mut path = match cmd_result {
+        Ok(result) => {
+            match String::from_utf8(result.stdout) {
+                Ok(path) => path,
+                Err(err) => panic!("ERROR UNWRAP STRING {err:?}")
+            }
+        }
+
+        Err(state) => panic!("ERROR ECHO PATH {state:?}")
+    };
+    
+
     if path == "" {
-        return String::from("data/libs.json");
+        return String::from("data/");
     }
 
+    path.pop();
     path
 }
 

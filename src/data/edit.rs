@@ -14,18 +14,18 @@ pub fn add() {
     print!("Library Name: ");
     io::stdout()
         .flush()
-        .expect("ERROR: DataManage -> add -> flush");
+        .expect("ERROR add -> flush");
     io::stdin()
         .read_line(&mut library_name)
-        .expect("ERROR: DataManage -> add -> read_line");
+        .expect("ERROR add -> read_line");
 
     print!("Git Link: ");
     io::stdout()
         .flush()
-        .expect("ERROR: DataManage -> add -> flush");
+        .expect("ERROR add -> flush");
     io::stdin()
         .read_line(&mut git_link)
-        .expect("ERROR: DataManage -> add -> read_line");
+        .expect("ERROR add -> read_line");
 
     let new_library = json!({
         library_name.trim(): {
@@ -46,10 +46,10 @@ pub fn remove() {
     print!("Library Name: ");
     io::stdout()
         .flush()
-        .expect("ERROR: DataManage -> delete -> flush");
+        .expect("ERROR remove -> flush");
     io::stdin()
         .read_line(&mut library_name)
-        .expect("ERROR: DataManage -> delete -> read_line");
+        .expect("ERROR remove -> read_line");
 
         let mut is_sure = false;
 
@@ -58,10 +58,10 @@ pub fn remove() {
             print!("Are You Sure? (yes or no): ");
             io::stdout()
                 .flush()
-                .expect("ERROR: DataManage -> delete -> flush");
+                .expect("ERROR remove -> flush");
             io::stdin()
                 .read_line(&mut is_sure_input)
-                .expect("ERROR: DataManage -> delete -> read_line");
+                .expect("ERROR remove -> read_line");
 
             if is_sure_input.trim() == "yes" {
                 is_sure = true;
@@ -74,7 +74,7 @@ pub fn remove() {
         if is_sure {
             let mut json = json.clone();
             json.as_object_mut()
-                .expect("ERROR: DataManage -> delete -> as_object_mut")
+                .expect("ERROR remove -> as_object_mut")
                 .remove(library_name.as_str().trim());
             update_data(json);
         }

@@ -1,1 +1,10 @@
-{}
+{
+  "OpenGL" : [
+        "glfw",
+        "glew"
+    ],
+    "SDL" : [
+        "SDL",
+        "raylib"
+    ]
+}
