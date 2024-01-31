@@ -1,5 +1,5 @@
 {
-  "OpenGL" : [
+    "OpenGL" : [
         "glfw",
         "glew"
     ],

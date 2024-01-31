@@ -1,7 +1,8 @@
-use super::update_data;
-use super::update_with;
-
-use super::get_json;
+use super::{
+    get_json,
+    update_data,
+    update_with
+};
 use std::io::{self, Write};
 use serde_json::json;
 
@@ -51,31 +52,31 @@ pub fn remove() {
         .read_line(&mut library_name)
         .expect("ERROR remove -> read_line");
 
-        let mut is_sure = false;
+    let mut is_sure = false;
 
-        loop {
-            let mut is_sure_input = String::new();
-            print!("Are You Sure? (yes or no): ");
-            io::stdout()
-                .flush()
-                .expect("ERROR remove -> flush");
-            io::stdin()
-                .read_line(&mut is_sure_input)
-                .expect("ERROR remove -> read_line");
+    loop {
+        let mut is_sure_input = String::new();
+        print!("Are You Sure? (yes or no): ");
+        io::stdout()
+            .flush()
+            .expect("ERROR remove -> flush");
+        io::stdin()
+            .read_line(&mut is_sure_input)
+            .expect("ERROR remove -> read_line");
 
-            if is_sure_input.trim() == "yes" {
-                is_sure = true;
-                break;
-            } else if is_sure_input.trim() == "no" {
-                break;
-            }
-        }
-
-        if is_sure {
-            let mut json = json.clone();
-            json.as_object_mut()
-                .expect("ERROR remove -> as_object_mut")
-                .remove(library_name.as_str().trim());
-            update_data(json);
+        if is_sure_input.trim() == "yes" {
+            is_sure = true;
+            break;
+        } else if is_sure_input.trim() == "no" {
+            break;
         }
     }
+
+    if is_sure {
+        let mut json = json.clone();
+        json.as_object_mut()
+            .expect("ERROR remove -> as_object_mut")
+            .remove(library_name.as_str().trim());
+        update_data(json);
+    }
+}

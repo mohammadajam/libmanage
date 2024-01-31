@@ -10,14 +10,39 @@ use std::{
     process::Command
 };
 
-#[allow(dead_code)]
 fn get_json() -> serde_json::Value {
-    let path = get_path();
-    serde_json::from_slice(
-        read_to_string(path)
-        .unwrap()
-        .as_bytes())
-        .unwrap()
+    let mut path = get_path();
+
+    path.push_str("libs.json");
+    let path = String::from(path);
+
+    let text = read_to_string(path);
+
+    match text {
+        Ok(content) => {
+            let json: serde_json::Value  = serde_json::from_slice(content.as_bytes()).unwrap();
+            return json;
+        }
+
+        Err(err) => panic!("ERROR READ FILE {err:?}")
+    }
+}
+
+fn get_package_json() -> serde_json::Value {
+    let mut path = get_path();
+
+    path.push_str("library_package.json");
+    path = String::from(path);
+
+    let text = read_to_string(path);
+
+    match text {
+        Ok(content) => {
+            let json: serde_json::Value = serde_json::from_slice(content.as_bytes()).unwrap();
+            return json;
+        }
+        Err(err) => panic!("ERROR READ library_packages ERR {err:?}")
+    }
 }
 
 

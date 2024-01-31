@@ -33,45 +33,49 @@ struct Cli {
 
 fn main() {
     let cli = Cli::parse();
-    //util::install();
     
     match cli.download {
         0 => {},
-        1 => {data::download(&cli.libs)},
+        1 => data::download(&cli.libs),
         _ => panic!("ERROR: too many args")
     }
 
     match cli.download_package {
         0 => {},
-        1 => {data::download_package(&cli.libs)},
+        1 => data::download_package(&cli.libs),
         _ => panic!("ERROR: too many args")
     }
 
 
     match cli.add {
         0 => {},
-        1 => {data::add()},
+        1 => data::add(),
         _ => panic!("ERROR: too many args")
     }
 
     match cli.remove {
         0 => {},
-        1 => {data::remove()},
+        1 => data::remove(),
         _ => panic!("ERROR: too many args")
     }
 
 
     match cli.list {
         0 => {},
-        1 => {util::list()},
+        1 => util::list(),
+        _ => panic!("ERROR: too many args")
+    }
+
+    match cli.list_package {
+        0 => {},
+        1 => util::list_package(),
         _ => panic!("ERROR: too many args")
     }
 
 
     match cli.install {
         0 => {},
-        1 => {util::install()},
+        1 => util::install(),
         _ => panic!("ERROR: too many args")
     }
-
 }
