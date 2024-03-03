@@ -1,0 +1,4 @@
+SDL :: git :: https://github.com/libsdl-org/SDL
+raylib :: git :: https://github.com/raysan5/raylib
+glfw :: git :: https://github.com/glfw/glfw
+SDL_2.28.0 :: wget :: https://github.com/libsdl-org/SDL/releases/download/release-2.28.0/SDL2-2.28.0.tar.gz

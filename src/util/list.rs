@@ -1,26 +1,52 @@
-use super::{get_json, get_package_json};
+use std::fs::read_to_string;
+use super::get_path;
 
 pub fn list() {
-    let json = get_json();
+    let mut path = get_path();
+    path.push_str("libs.txt");
+    let file = read_to_string(path).unwrap();
 
-    for (lib, content) in json.as_object().unwrap() {
-        println!("{}", lib);
-        for (source, link) in content.as_object().unwrap() {
-            println!("source: {}     link: {}\n", source, link);
+    println!("Library Name       Source             Link\n");
+
+    for line in file.lines() {
+        let parts: Vec<String> = line.split("::").map(str::to_string).into_iter().collect();
+
+        let library_name = parts.get(0).unwrap().trim();
+        let library_source = parts.get(1).unwrap().trim();
+        let library_link = parts.get(2).unwrap().trim();
+
+        print!("{}", library_name);
+        for _ in 1..(20-library_name.len()) {
+            print!(" ");
         }
+
+        print!("{}", library_source);
+        for _ in 1..(20-library_source.len()) {
+            print!(" ");
+        }
+
+        println!("{}\n", library_link);
     }
 }
 
 pub fn list_package() {
-    let package_json = get_package_json();
+    let mut path = get_path();
+    path.push_str("package.txt");
+    let file = read_to_string(path).unwrap();
 
-    for (package, content) in package_json.as_object().unwrap() {
-        println!("{package}");
-        print!("Libs: ");
+    println!("Package Name       Libraries\n");
 
-        for lib in content.as_array().unwrap().iter() {
-            print!("{lib} ");
+    for line in file.lines() {
+        let parts: Vec<String> = line.split("::").map(str::to_string).into_iter().collect();
+
+        let package_name = parts.get(0).unwrap().trim();
+        let package_libraries = parts.get(1).unwrap().trim();
+
+        print!("{}", package_name);
+        for _ in 1..(20-package_name.len()) {
+            print!(" ");
         }
-        println!("\n");
+
+        println!("{}\n", package_libraries);
     }
 }

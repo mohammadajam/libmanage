@@ -4,9 +4,7 @@ use std::{
     io::Write,
 };
 use dirs::home_dir;
-
 use super::line_exist;
-
 
 pub fn install() {
     let mut file  = OpenOptions::new()
@@ -21,7 +19,8 @@ pub fn install() {
         Command::new("mkdir")
             .arg(&libmanage_dir)
             .spawn()
-            .expect("Error: mkdir .libmanage");
+            .expect("Error: mkdir .libmanage")
+            .wait().expect("E");
     }
 
     if !libmanage_dir.join("data/").exists() {
@@ -38,23 +37,21 @@ pub fn install() {
             .spawn()
             .expect("Error: cp .libmanage/libmanage");
     }
-    if libmanage_dir.join("data/").exists() {
-        Command::new("cp")
-            .arg("-a")
-            .arg("-n")
-            .arg("data/.")
-            .arg(&libmanage_dir.join("data/."))
-            .spawn()
-            .expect("Error: cp .libmanage/data");
+    Command::new("cp")
+        .arg("-a")
+        .arg("-n")
+        .arg("data/.")
+        .arg(&libmanage_dir.join("data/."))
+        .spawn()
+        .expect("Error: cp .libmanage/data");
 
-        Command::new("cp")
-            .arg("-n")
-            .arg("-a")
-            .arg("target/debug/libmanage")
-            .arg(&libmanage_dir)
-            .spawn()
-            .expect("Error: cp .libmanage/libmanage");
-    }
+    Command::new("cp")
+        .arg("-n")
+        .arg("-a")
+        .arg("target/debug/libmanage")
+        .arg(&libmanage_dir)
+        .spawn()
+        .expect("Error: cp .libmanage/libmanage");
 
     if libmanage_dir.join("libmanage").exists() {
         Command::new("rm")
@@ -72,16 +69,13 @@ pub fn install() {
     let libmanage_alias = "alias libmanage=\"$HOME/.libmanage/libmanage\"";
     let libmanage_data = "export LIBMANAGE_DATA=\"$HOME/.libmanage/data/\"";
 
-
-
     if !line_exist(libmanage_alias, &mut file) {
         file.write(libmanage_alias.as_bytes()).expect("Error: write libmanage alias to .bashrc");
         file.write("\n\n".as_bytes()).expect("Error: write \\n to .bashrc");
+
+        file.write(libmanage_data.as_bytes()).expect("Error: write libmanage date export to .bashrc");
+        file.write("\n".as_bytes()).expect("Error: write \\n to .bashrc");
     }
-
-
-    file.write(libmanage_data.as_bytes()).expect("Error: write libmanage date export to .bashrc");
-    file.write("\n".as_bytes()).expect("Error: write \\n to .bashrc");
 }
 
 #[allow(dead_code)]

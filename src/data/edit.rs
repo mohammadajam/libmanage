@@ -1,48 +1,76 @@
-use super::{
-    get_json,
-    update_data,
-    update_with
+use super::get_path;
+use std::{
+    fs::{
+        OpenOptions,
+        read_to_string,
+        write
+    }, 
+    io::{
+        self, 
+        Write
+    }, 
+    process::exit
 };
-use std::io::{self, Write};
-use serde_json::json;
 
 pub fn add() {
-    let mut json: serde_json::Value = get_json();
-
     let mut library_name = String::new();
-    let mut git_link = String::new();
+    let mut library_source = String::new();
+    let mut library_link = String::new();
 
-    print!("Library Name: ");
+    print!("Library name: ");
     io::stdout()
         .flush()
-        .expect("ERROR add -> flush");
+        .expect("Error: flush");
     io::stdin()
         .read_line(&mut library_name)
-        .expect("ERROR add -> read_line");
+        .expect("Error: read_line");
 
-    print!("Git Link: ");
+    print!("Library source\n(1) git\n(2) wget\n");
     io::stdout()
         .flush()
-        .expect("ERROR add -> flush");
+        .expect("Error: flush");
     io::stdin()
-        .read_line(&mut git_link)
-        .expect("ERROR add -> read_line");
+        .read_line(&mut library_source)
+        .expect("Error: read_line");
 
-    let new_library = json!({
-        library_name.trim(): {
-            "github": git_link.trim()
+    print!("Library link: ");
+    io::stdout()
+        .flush()
+        .expect("Error: flush");
+    io::stdin()
+        .read_line(&mut library_link)
+        .expect("Error: read_line");
+
+
+    let mut path = get_path();
+    path.push_str("libs.txt");
+
+    let file = read_to_string(&path).unwrap();
+
+    for line in file.lines() {
+        let parts: Vec<String> = line.split("::").map(str::to_string).into_iter().collect();
+
+        if parts.get(0).unwrap().trim() == library_name.trim() {
+            eprintln!("{} Library already exist", library_name.trim());
+            exit(0);
         }
-    });
+    
+    }
 
+    let mut file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open(path)
+        .unwrap();
 
-
-    update_with(&mut json, &new_library);
-    update_data(json);
+    let lib_info = format!("{} :: {} :: {}", library_name.trim(), library_source.trim(), library_link.trim());
+    if let Err(err) = writeln!(file, "{}", lib_info) {
+        eprintln!("Error: Unable to write to file: {}", err);
+    }
 }
 
 
 pub fn remove() {
-    let json = get_json();
     let mut library_name = String::new();
     print!("Library Name: ");
     io::stdout()
@@ -73,10 +101,28 @@ pub fn remove() {
     }
 
     if is_sure {
-        let mut json = json.clone();
-        json.as_object_mut()
-            .expect("ERROR remove -> as_object_mut")
-            .remove(library_name.as_str().trim());
-        update_data(json);
+        let mut path = get_path();
+        path.push_str("libs.txt");
+        let file = read_to_string(&path).unwrap();
+
+        let mut new_file: String = String::new();
+
+        for line in file.lines() {
+            let parts: Vec<String> = line.split("::").map(str::to_string).into_iter().collect();
+
+            if parts.get(0).unwrap().trim() != library_name.trim() {
+                new_file.push_str(line);
+                new_file.push('\n');
+            }
+        }
+        write(path, new_file).expect("Error write to file");
     }
+}
+
+pub fn add_package() {
+    todo!()
+}
+
+pub fn remove_package() {
+    todo!()
 }
