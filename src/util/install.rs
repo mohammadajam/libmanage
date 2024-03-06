@@ -77,8 +77,3 @@ pub fn install() {
         file.write("\n".as_bytes()).expect("Error: write \\n to .bashrc");
     }
 }
-
-#[allow(dead_code)]
-pub fn uninstall() {
-    unimplemented!()
-}

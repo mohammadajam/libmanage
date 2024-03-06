@@ -23,9 +23,6 @@ struct Cli {
 
     #[arg(long, action = clap::ArgAction::Count, help = "installs the programme locally")]
     install: u8,
-
-    #[arg(long, action = clap::ArgAction::Count, help = "uninstalls the programme")]
-    uninstall: u8
 }
 
 fn main() {
@@ -45,7 +42,7 @@ fn main() {
 
             match cli.remove {
                 0 => {}
-                _ => data::remove()
+                _ => data::remove("libs.txt")
             }
 
             match cli.list {
@@ -56,11 +53,6 @@ fn main() {
             match cli.install {
                 0 => {}
                 _ => util::install()
-            }
-
-            match cli.uninstall {
-                0 => {}
-                _ => util::uninstall()
             }
         },
         _ => {
@@ -76,7 +68,7 @@ fn main() {
 
             match cli.remove {
                 0 => {}
-                _ => data::remove_package()
+                _ => data::remove("package.txt")
             }
 
             match cli.list {
